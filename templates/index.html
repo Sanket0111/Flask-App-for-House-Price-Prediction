@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Price Prediction</title>
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOMqj+Ns1I5CZcFf1J3lJxloEtn6NGAfIpw8giSL" crossorigin="anonymous">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-size: cover;
+            position: relative;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            z-index: -1;
+        }
+
+        .water-drops {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .water-drops::before {
+            content: '';
+            position: absolute;
+            top: -10%;
+            left: -10%;
+            width: 120%;
+            height: 120%;
+            background: radial-gradient(circle, rgba(0, 255, 255, 0.6) 20%, transparent 60%);
+            animation: waterDroplets 2s linear infinite;
+            opacity: 0.6;
+            filter: blur(2px);
+        }
+
+        @keyframes waterDroplets {
+            0% { transform: translateY(-100%) scale(1); }
+            100% { transform: translateY(100%) scale(1.5); }
+        }
+
+        header {
+            background-size: cover;
+            padding: 20px;
+            text-align: center;
+            color: #ffffff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        main {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        label i {
+            margin-right: 8px;
+            color: #3498db;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 16px;
+            border-radius: 5px;
+            border: 1px solid #bdc3c7;
+            background: #ffffff;
+            color: #2c3e50;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+            transition: background 0.3s ease, transform 0.3s ease;
+            appearance: none;
+        }
+
+        select:hover {
+            background: #ecf0f1;
+            transform: scale(1.02);
+        }
+
+        button {
+            width: 100%;
+            background: #3498db;
+            color: #ffffff;
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 700;
+            text-transform: uppercase;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        button:active {
+            transform: scale(0.98);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        #predictedPrice {
+            margin-top: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            padding: 15px;
+            background-color: rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            animation: revealPrice 1s ease-out forwards;
+            opacity: 0;
+            transition: opacity 0.5s ease-out;
+            color: #2c3e50;
+        }
+
+        @keyframes revealPrice {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #2c3e50;
+            width: 100%;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            margin-top: auto;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay"></div>
+    <div class="water-drops"></div>
+    <header>
+        <h1>House Price Prediction</h1>
+    </header>
+    <main>
+        <p>Welcome to House Price Prediction Model!</p>
+
+        <form id="predictionForm">
+            <label for="beds"><i class="fas fa-bed"></i>Bedrooms:</label>
+            <select id="beds" name="beds" required>
+                <option value="" disabled selected>Select number of bedrooms</option>
+                {% for bedroom in bedrooms %}
+                    <option value="{{ bedroom }}">{{ bedroom }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="baths"><i class="fas fa-bath"></i>Baths:</label>
+            <select id="baths" name="baths" required>
+                <option value="" disabled selected>Select number of bathrooms</option>
+                {% for bathroom in bathrooms %}
+                    <option value="{{ "%.1f"|format(bathroom) }}">{{ "%.1f"|format(bathroom) }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="size"><i class="fas fa-ruler-combined"></i>Size:</label>
+            <select id="size" name="size" required>
+                <option value="" disabled selected>Select size of the house</option>
+                {% for house_size in sizes %}
+                    <option value="{{ house_size }}">{{ house_size }} sqft</option>
+                {% endfor %}
+            </select>
+
+            <label for="zip_code"><i class="fas fa-map-marker-alt"></i>Zip Code:</label>
+            <select id="zip_code" name="zip_code" required>
+                <option value="" disabled selected>Select zip code</option>
+                {% for zip_code in zip_codes %}
+                    <option value="{{ zip_code }}">{{ zip_code }}</option>
+                {% endfor %}
+            </select>
+
+            <button type="button" onclick="sendData()">Predict Price</button>
+
+            <div id="predictedPrice"></div>
+        </form>
+    </main>
+    <footer>
+    <p>&copy; 2024 House Price Prediction. All rights reserved.<br>
+       Published and Created by Sanket Patil</p>
+    </footer>
+
+    <script>
+        function sendData() {
+            const form = document.getElementById('predictionForm');
+            const formData = new FormData(form);
+
+            fetch('/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const priceContainer = document.getElementById("predictedPrice");
+                if (data.error) {
+                    priceContainer.innerHTML = "Error: " + data.error;
+                } else {
+                    priceContainer.innerHTML = "Price: INR " + data.price;
+                    priceContainer.style.opacity = "1";
+                }
+            });
+        }
+    </script>
+</body>
+</html>
