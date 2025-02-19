@@ -19,6 +19,14 @@ Welcome to the House Price Prediction web application! This project is designed 
 - Python 3.2 - 3.8+
 - pip
 - Virtual environment (optional but recommended)
+  
+### Required Libraries
+
+Flask → To create the web application
+pandas → To handle and process the dataset
+pickle → To load the trained model
+joblib → Alternative for loading models (not used here but imported)
+scikit-learn → Required for model functionality
 
 ### Setup
 
